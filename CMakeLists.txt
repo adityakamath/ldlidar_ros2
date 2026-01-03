@@ -43,7 +43,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sdk)
 add_executable(${PROJECT_NAME}_node  
   ${CMAKE_CURRENT_SOURCE_DIR}/src/demo.cpp 
 )
+
 ament_target_dependencies(${PROJECT_NAME}_node rclcpp sensor_msgs geometry_msgs)
+
 target_link_libraries(${PROJECT_NAME}_node 
   pthread
   ldlidar_driver
