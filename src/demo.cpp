@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   std::string point_cloud_2d_topic_name;
 	std::string port_name;
   LaserScanSetting setting;
-  int serial_baudrate;
+  int serial_baudrate = 0;
   ldlidar::LDType lidartypename;
 
   // declare ros2 param

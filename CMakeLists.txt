@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 project(ldlidar_ros2)
 
 # Default to C99
@@ -54,7 +54,7 @@ install(TARGETS ${PROJECT_NAME}_node
  DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY config launch rviz2 scripts
+install(DIRECTORY launch rviz2 scripts
   DESTINATION share/${PROJECT_NAME}/
 )
 
