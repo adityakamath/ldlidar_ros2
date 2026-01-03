@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   // declare ros2 param
   node->declare_parameter<std::string>("product_name", product_name);
   node->declare_parameter<std::string>("laser_scan_topic_name", laser_scan_topic_name);
-  node->declare_parameter<std::string>("point_cloud_2d_topic_name", point_cloud_2d_topic_name);
+  node->declare_parameter<std::string>("point_cloud_2d_topic_name", "");
   node->declare_parameter<std::string>("frame_id", setting.frame_id);
   node->declare_parameter<std::string>("port_name", port_name);
   node->declare_parameter<int>("serial_baudrate", serial_baudrate);
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
   RCLCPP_INFO(node->get_logger(), "ROS2 param input:");
   RCLCPP_INFO(node->get_logger(), "<product_name>: %s", product_name.c_str());
   RCLCPP_INFO(node->get_logger(), "<laser_scan_topic_name>: %s", laser_scan_topic_name.c_str());
-  RCLCPP_INFO(node->get_logger(), "<point_cloud_2d_topic_name>: %s", point_cloud_2d_topic_name.c_str());
+  RCLCPP_INFO(node->get_logger(), "<point_cloud_2d_topic_name>: %s", point_cloud_2d_topic_name.empty() ? "(disabled)" : point_cloud_2d_topic_name.c_str());
   RCLCPP_INFO(node->get_logger(), "<frame_id>: %s", setting.frame_id.c_str());
   RCLCPP_INFO(node->get_logger(), "<port_name>: %s ", port_name.c_str());
   RCLCPP_INFO(node->get_logger(), "<serial_baudrate>: %d ", serial_baudrate);
@@ -156,8 +156,13 @@ int main(int argc, char **argv) {
   rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr lidar_pub_laserscan =
       node->create_publisher<sensor_msgs::msg::LaserScan>(laser_scan_topic_name, rclcpp::SensorDataQoS());
 
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr lidar_pub_pointcloud =
-      node->create_publisher<sensor_msgs::msg::PointCloud>(point_cloud_2d_topic_name, rclcpp::SensorDataQoS());
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr lidar_pub_pointcloud = nullptr;
+  if (!point_cloud_2d_topic_name.empty()) {
+    lidar_pub_pointcloud = node->create_publisher<sensor_msgs::msg::PointCloud>(point_cloud_2d_topic_name, rclcpp::SensorDataQoS());
+    RCLCPP_INFO(node->get_logger(), "PointCloud2D publishing enabled on topic: %s", point_cloud_2d_topic_name.c_str());
+  } else {
+    RCLCPP_INFO(node->get_logger(), "PointCloud2D publishing disabled");
+  }
 
   rclcpp::WallRate r(10); //Hz
 
@@ -173,7 +178,9 @@ int main(int argc, char **argv) {
         double lidar_scan_freq = 0;
         ldlidar_drv->GetLidarScanFreq(lidar_scan_freq);
         ToLaserscanMessagePublish(laser_scan_points, lidar_scan_freq, setting, node, lidar_pub_laserscan);
-        ToSensorPointCloudMessagePublish(laser_scan_points, setting, node, lidar_pub_pointcloud);
+        if (lidar_pub_pointcloud != nullptr) {
+          ToSensorPointCloudMessagePublish(laser_scan_points, setting, node, lidar_pub_pointcloud);
+        }
         break;
       }
       case ldlidar::LidarStatus::DATA_TIME_OUT: {

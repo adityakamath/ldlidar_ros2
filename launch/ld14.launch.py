@@ -31,7 +31,7 @@ def generate_launch_description():
       parameters=[
         {'product_name': 'LDLiDAR_LD14'},
         {'laser_scan_topic_name': 'scan'},
-        {'point_cloud_2d_topic_name': 'pointcloud2d'},
+        {'point_cloud_2d_topic_name': 'pointcloud2d'},  # leave empty ('') to disable
         {'frame_id': 'base_laser'},
         {'port_name': '/dev/ttyUSB0'},
         {'serial_baudrate' : 115200},
