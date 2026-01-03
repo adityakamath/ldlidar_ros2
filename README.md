@@ -167,3 +167,8 @@ colcon build
 ```bash
 rviz2
 ```
+
+## Future Improvements
+
+- **Composable Node Architecture**: Convert to rclcpp_components for intra-process communication and zero-copy messaging
+- **Lifecycle Node Support**: Implement ROS 2 lifecycle states for controlled startup/shutdown sequences

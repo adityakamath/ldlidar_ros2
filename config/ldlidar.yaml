@@ -1,0 +1,24 @@
+# LDLiDAR ROS 2 Configuration
+# Default parameters for LD06 LiDAR
+
+/**:
+  ros__parameters:
+    # Hardware Configuration
+    product_name: "LDLiDAR_LD06"
+    port_name: "/dev/ttyLIDAR"  # Use udev rule symlink (see udev/99-ldlidar.rules)
+    serial_baudrate: 230400
+
+    # Topic Configuration
+    laser_scan_topic_name: "scan"
+    point_cloud_2d_topic_name: "pointcloud2d"
+    frame_id: "laser_link"
+
+    # Scan Configuration
+    laser_scan_dir: true  # true = counterclockwise, false = clockwise
+    range_min: 0.02  # meters
+    range_max: 12.0  # meters
+
+    # Angle Cropping (mask data within specified angle range)
+    enable_angle_crop_func: false
+    angle_crop_min: 135.0  # degrees
+    angle_crop_max: 225.0  # degrees

@@ -89,9 +89,29 @@ int main(int argc, char **argv) {
   RCLCPP_INFO(node->get_logger(), "<range_min>: %f", setting.range_min);
   RCLCPP_INFO(node->get_logger(), "<range_max>: %f", setting.range_max);
 
+  // Parameter validation
   if (port_name.empty()) {
-    RCLCPP_ERROR(node->get_logger(), "fail, port_name is empty!");
+    RCLCPP_ERROR(node->get_logger(), "Parameter validation failed: port_name is empty!");
     exit(EXIT_FAILURE);
+  }
+
+  if (serial_baudrate <= 0) {
+    RCLCPP_ERROR(node->get_logger(), "Parameter validation failed: serial_baudrate must be positive (got %d)", serial_baudrate);
+    exit(EXIT_FAILURE);
+  }
+
+  if (setting.range_min < 0.0 || setting.range_min >= setting.range_max) {
+    RCLCPP_ERROR(node->get_logger(), "Parameter validation failed: invalid range_min (%f) or range_max (%f)",
+      setting.range_min, setting.range_max);
+    exit(EXIT_FAILURE);
+  }
+
+  if (setting.enable_angle_crop_func) {
+    if (setting.angle_crop_min < 0.0 || setting.angle_crop_min > 360.0 ||
+        setting.angle_crop_max < 0.0 || setting.angle_crop_max > 360.0) {
+      RCLCPP_ERROR(node->get_logger(), "Parameter validation failed: angle_crop values must be in range [0, 360]");
+      exit(EXIT_FAILURE);
+    }
   }
 
   ldlidar_drv->RegisterGetTimestampFunctional(std::bind(&GetTimestamp)); 
@@ -132,11 +152,12 @@ int main(int argc, char **argv) {
   }
 
   // create ldlidar data topic and publisher
-  rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr lidar_pub_laserscan = 
-      node->create_publisher<sensor_msgs::msg::LaserScan>(laser_scan_topic_name, 10);
-  
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr lidar_pub_pointcloud = 
-      node->create_publisher<sensor_msgs::msg::PointCloud>(point_cloud_2d_topic_name, 10);
+  // Use SensorDataQoS for sensor streams (BEST_EFFORT, VOLATILE, KeepLast(5))
+  rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr lidar_pub_laserscan =
+      node->create_publisher<sensor_msgs::msg::LaserScan>(laser_scan_topic_name, rclcpp::SensorDataQoS());
+
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr lidar_pub_pointcloud =
+      node->create_publisher<sensor_msgs::msg::PointCloud>(point_cloud_2d_topic_name, rclcpp::SensorDataQoS());
 
   rclcpp::WallRate r(10); //Hz
 
