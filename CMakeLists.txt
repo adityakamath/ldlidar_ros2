@@ -40,13 +40,17 @@ include_directories(
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sdk)
 
-add_executable(${PROJECT_NAME}_node  
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/demo.cpp 
+
+# Create executable for ldlidar_ros2_node
+add_executable(${PROJECT_NAME}_node
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/demo.cpp
 )
 
-ament_target_dependencies(${PROJECT_NAME}_node rclcpp sensor_msgs geometry_msgs)
-
-target_link_libraries(${PROJECT_NAME}_node 
+# Modern CMake: Link dependencies directly
+target_link_libraries(${PROJECT_NAME}_node PUBLIC
+  rclcpp::rclcpp
+  sensor_msgs::sensor_msgs_library
+  geometry_msgs::geometry_msgs_library
   pthread
   ldlidar_driver
 )
