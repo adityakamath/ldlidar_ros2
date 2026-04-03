@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.28)
 project(ldlidar_ros2)
 
 # Default to C99
@@ -47,12 +47,15 @@ add_executable(${PROJECT_NAME}_node
 )
 
 # Modern CMake: Link dependencies directly
-target_link_libraries(${PROJECT_NAME}_node PUBLIC
-  rclcpp::rclcpp
-  sensor_msgs::sensor_msgs_library
-  geometry_msgs::geometry_msgs_library
-  pthread
-  ldlidar_driver
+target_link_libraries(${PROJECT_NAME}_node
+  PUBLIC
+    ${geometry_msgs_TARGETS}
+    ${sensor_msgs_TARGETS}
+    rclcpp::rclcpp
+    sensor_msgs::sensor_msgs_library
+  PRIVATE
+    pthread
+    ldlidar_driver
 )
 
 # Install 
