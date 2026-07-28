@@ -63,7 +63,7 @@ install(TARGETS ${PROJECT_NAME}_node
  DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch rviz2 scripts
+install(DIRECTORY launch rviz2
   DESTINATION share/${PROJECT_NAME}/
 )
 
