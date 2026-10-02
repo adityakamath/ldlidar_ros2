@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 '''
 Parameter Description:
 ---
-- Set laser scan directon: 
+- Set laser scan directon:
   1. Set counterclockwise, example: {'laser_scan_dir': True}
   2. Set clockwise,        example: {'laser_scan_dir': False}
 - Angle crop setting, Mask data within the set angle range:
