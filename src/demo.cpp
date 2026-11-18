@@ -164,7 +164,8 @@ int main(int argc, char **argv) {
     RCLCPP_INFO(node->get_logger(), "PointCloud2D publishing disabled");
   }
 
-  rclcpp::WallRate r(10); //Hz
+  // GetLaserScanData() only polls; poll well above the ~10 Hz scan rate so scans are stamped promptly
+  rclcpp::WallRate r(100); //Hz
 
   ldlidar::Points2D laser_scan_points;
 
