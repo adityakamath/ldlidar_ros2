@@ -1,2 +1,5 @@
 .vscode
 *.json
+
+# Local colcon opt-out (e.g. macOS builds)
+COLCON_IGNORE
